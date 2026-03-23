@@ -74,9 +74,19 @@ scatterGroup.selectAll("circle")
     .attr("cy", d => y(d.score))
     .attr("r", 6)
     .attr("fill", "steelblue")
-    .on("mouseover", (event, d) => {
+    .on("mouseover", function(event, d) {
+        d3.select(this)
+            .attr("fill", "red");
+
         d3.select("#details")
             .text(`${d.school} | Income: ${d.income} | Score: ${d.score}`);
+    })
+    .on("mouseout", function() {
+        d3.select(this)
+            .attr("fill", "steelblue");
+
+        d3.select("#details")
+            .text("Hover on a data point to learn more");
     });
 
 scatterSVG.append("text")
