@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS441 Information Visualization</title>
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- D3 -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <h1>CS441 Information Visualization Project</h1>
+        <p class="subtitle">Ty Shagory, Bohan Wang, Olivia Joyner, Jose Izaguirre</p>
+    </header>
+    <!-- ARTICLE / POEM SECTION -->
+    <section class="text-section">
+        <h2>Article / Poem</h2>
+        <p>
+            <!-- Replace this with your actual writing -->
+            Data tells stories, but not all voices are heard equally.
+            Beneath the surface of numbers lies a deeper narrative—
+            one shaped by inequality, access, and opportunity.
+        </p>
+    </section>
+    <!-- MAIN VISUALIZATION LAYOUT -->
+<section class="vis-section">
+    <h2>City Analysis: Los Angeles</h2>
+    <div class="vis-container">
+        <div class="chart-box">
+            <div id="heatmap"></div>
+        </div>
+        <div class="chart-box">
+            <div id="scatter"></div>
+        </div>
+    </div>
+</section>
+<!-- INFO PANEL -->
+<section>
+    <div id="info-panel">
+        <h3>School Info</h3>
+        <p id="details">Hover over a point to see details</p>
+    </div>
+</section>
+    <!-- FOOTER -->
+    <footer>
+        <p>CS441 • Information Visualization • Spring 2026</p>
+    </footer>
+    <!-- YOUR SCRIPT -->
+    <script src="js/main.js"></script>
+</body>
+</html>
