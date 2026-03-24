@@ -30,6 +30,11 @@ h2 {
     margin-bottom: 15px;
 }
 
+.text-section {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
 .vis-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -66,4 +71,52 @@ svg {
     .vis-container {
         grid-template-columns: 1fr;
     }
+
+    .poem-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.text-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.poem-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+    margin-top: 10px;
+}
+
+.poem {
+    padding: 20px;
+    border-radius: 8px;
+    line-height: 1.8;
+    text-align: center;
+}
+
+.poem p {
+    margin: 0;
+    white-space: pre-line;
+    max-width: 90%;
+}
+
+.poem p {
+    margin: 0 auto;
+    white-space: pre-line;
+    max-width: 90%;
+}
+
+.poem-left {
+    background: #fff8ef;
+    color: #222;
+    opacity: 1;
+}
+
+.poem-right {
+    background: #f3f3f3;
+    color: #666;
+    opacity: 0.6;
 }

@@ -192,6 +192,10 @@ d3.csv("data/la_schools.csv", d => ({
 })).then(data => {
     const validData = data.filter(d => !isNaN(d.income) && !isNaN(d.score));
 
+    const opacityScale = d3.scaleLinear()
+        .domain(d3.extent(validData, d => d.income))
+        .range([0.2, 0.99]);
+
     const x = d3.scaleLinear()
         .domain(d3.extent(validData, d => d.income))
         .nice()
@@ -224,7 +228,7 @@ d3.csv("data/la_schools.csv", d => ({
         .attr("cy", d => y(d.score))
         .attr("r", 5)
         .attr("fill", "steelblue")
-        .attr("opacity", 0.75)
+        .attr("opacity", d => opacityScale(d.income))
         .on("mouseover", function(event, d) {
             d3.select(this)
                 .attr("fill", "red")
