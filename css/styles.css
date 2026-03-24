@@ -103,12 +103,6 @@ svg {
     max-width: 90%;
 }
 
-.poem p {
-    margin: 0 auto;
-    white-space: pre-line;
-    max-width: 90%;
-}
-
 .poem-left {
     background: #fff8ef;
     color: #222;
@@ -119,4 +113,16 @@ svg {
     background: #f3f3f3;
     color: #666;
     opacity: 0.6;
+}
+
+#heatmap {
+    width: 100%;
+    height: 300px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.leaflet-container {
+    width: 100%;
+    height: 100%;
 }

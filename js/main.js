@@ -1,160 +1,151 @@
-// Heatmap
-const heatmapWidth = 420;
-const heatmapHeight = 300;
-const heatmapMargin = 20;
+const mapMarkersBySchool = {};
+const scatterDotsBySchool = {};
 
-const heatmapSVG = d3.select("#heatmap")
-    .append("svg")
-    .attr("width", heatmapWidth)
-    .attr("height", heatmapHeight);
+function highlightSchool(schoolName) {
+    const mapMarker = mapMarkersBySchool[schoolName];
+    const scatterDot = scatterDotsBySchool[schoolName];
 
-Promise.all([
-    d3.json("data/la.geojson"),
-    d3.csv("data/la_schools.csv", d => ({
-        school: d.school,
-        latitude: +d.latitude,
-        longitude: +d.longitude,
-        score: +d.score,
-        income: +d.income,
-        funding: +d.funding,
-        enrollment: +d.enrollment,
-        white: +d.white,
-        asian: +d.asian,
-        black: +d.black,
-        hispanic: +d.hispanic,
-        other: +d.other,
-        minority: +d.minority
-    }))
-]).then(([geoData, data]) => {
+    if (mapMarker) {
+        mapMarker.setStyle({
+            color: "black",
+            weight: 1.5
+        });
+    }
+
+    if (scatterDot) {
+        scatterDot
+            .attr("fill", "red")
+            .attr("r", 7);
+    }
+}
+
+function resetSchoolHighlight(schoolName) {
+    const mapMarker = mapMarkersBySchool[schoolName];
+    const scatterDot = scatterDotsBySchool[schoolName];
+
+    if (mapMarker) {
+        mapMarker.setStyle({
+            color: "#333",
+            weight: 0.5
+        });
+    }
+
+    if (scatterDot) {
+        scatterDot
+            .attr("fill", "steelblue")
+            .attr("r", 5);
+    }
+}
+
+function showSchoolDetails(d) {
+    d3.select("#details").text(
+        `${d.school} | Median Income: $${d.income.toLocaleString()} | Avg SAT: ${d.score}`
+    );
+}
+
+function resetSchoolDetails() {
+    d3.select("#details")
+        .text("Hover over a data point to see school details");
+}
+
+// LEAFLET MAP (replaces D3 heatmap)
+
+const map = L.map("heatmap", {
+    zoomControl: true,
+    scrollWheelZoom: false,
+});
+
+// Add basemap
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors",
+    minZoom: 9,
+    maxZoom: 15
+}).addTo(map);
+
+// Load data
+d3.csv("data/la_schools.csv", d => ({
+    school: d.school,
+    latitude: +d.latitude,
+    longitude: +d.longitude,
+    score: +d.score,
+    income: +d.income,
+    funding: +d.funding,
+    enrollment: +d.enrollment,
+    white: +d.white,
+    asian: +d.asian,
+    black: +d.black,
+    hispanic: +d.hispanic,
+    other: +d.other,
+    minority: +d.minority
+})).then(data => {
+
     const validData = data.filter(d =>
-        !isNaN(d.latitude) && !isNaN(d.longitude)
+        !isNaN(d.latitude) &&
+        !isNaN(d.longitude) &&
+        !isNaN(d.income)
     );
 
-    console.log("validData count:", validData.length);
-    console.log("first valid row:", validData[0]);
-
-    // Build a GeoJSON from school points so projection definitely fits the data
-    const schoolPointsGeoJSON = {
-        type: "FeatureCollection",
-        features: validData.map(d => ({
-            type: "Feature",
-            geometry: {
-                type: "Point",
-                coordinates: [d.longitude, d.latitude]
-            },
-            properties: d
-        }))
-    };
-
-    const projection = d3.geoMercator()
-        .fitExtent(
-            [[heatmapMargin, heatmapMargin], [heatmapWidth - heatmapMargin, heatmapHeight - heatmapMargin]],
-            schoolPointsGeoJSON
-        );
-
-    const path = d3.geoPath().projection(projection);
-
-    // Draw county boundary
-    heatmapSVG.selectAll("path")
-        .data(geoData.features)
-        .enter()
-        .append("path")
-        .attr("d", path)
-        .attr("fill", "#bebebe")     // light gray fill
-        .attr("opacity", 0.25)       // keep it subtle
-        .attr("stroke", "#888")      // keep your border
-        .attr("stroke-width", 1.2);
-
-    // Color scale
     const colorScale = d3.scaleSequential()
         .domain(d3.extent(validData, d => d.income))
         .interpolator(d3.interpolateYlOrRd);
 
-    // Draw schools
-    heatmapSVG.selectAll("circle")
-        .data(validData)
-        .enter()
-        .append("circle")
-        .attr("cx", d => projection([d.longitude, d.latitude])[0])
-        .attr("cy", d => projection([d.longitude, d.latitude])[1])
-        .attr("r", 6)
-        .attr("fill", d => colorScale(d.income))
-        .attr("opacity", 0.85)
-        .attr("stroke", "#333")
-        .attr("stroke-width", 0.5)
-        .attr("stroke", "none")
-        .on("mouseover", function(event, d) {
-            d3.select(this)
-                .attr("stroke", "black")
-                .attr("stroke-width", 1.5);
+    const bounds = [];
 
-            d3.select("#details").text(
-                `${d.school} | Median Income: $${d.income.toLocaleString()} | Avg SAT: ${d.score}`
-            );
-        })
-        .on("mouseout", function() {
-            d3.select(this)
-                .attr("stroke", "none");
+    validData.forEach(d => {
+        const marker = L.circleMarker([d.latitude, d.longitude], {
+            radius: 6,
+            fillColor: colorScale(d.income),
+            fillOpacity: 0.85,
+            color: "#333",
+            weight: 0.5
+        }).addTo(map);
 
-            d3.select("#details")
-                .text("Hover over a data point to see school details");
+        mapMarkersBySchool[d.school] = marker;
+
+        bounds.push([d.latitude, d.longitude]);
+
+        // Hover interaction (same as your D3 logic)
+        marker.on("mouseover", function() {
+            highlightSchool(d.school);
+            showSchoolDetails(d);
         });
 
-    // Legend
-    const legendWidth = 120;
-    const legendHeight = 10;
+        marker.on("mouseout", function() {
+            resetSchoolHighlight(d.school);
+        });
+    });
 
-    const legend = heatmapSVG.append("g")
-        .attr("transform", `translate(20, ${heatmapHeight - 40})`)
+    // Fit map to data
+    if (bounds.length > 0) {
+        map.fitBounds(bounds, { padding: [20, 20] });
 
-    const gradient = heatmapSVG.append("defs")
-        .append("linearGradient")
-        .attr("id", "legend-gradient");
+        const fittedBounds = L.latLngBounds(bounds).pad(0.25);
+        map.setMaxBounds(fittedBounds);
+    }
 
-    gradient.selectAll("stop")
-        .data(d3.range(0, 1.01, 0.1))
-        .enter()
-        .append("stop")
-        .attr("offset", d => `${d * 100}%`)
-        .attr("stop-color", d => colorScale(
-            d3.interpolate(
-                d3.min(validData, d => d.income),
-                d3.max(validData, d => d.income)
-            )(d)
-        ));
+    // Simple legend (replaces your SVG legend)
+    const legend = L.control({ position: "bottomleft" });
 
-    legend.append("rect")
-        .attr("width", legendWidth)
-        .attr("height", legendHeight)
-        .style("fill", "url(#legend-gradient)");
+    legend.onAdd = function () {
+        const div = L.DomUtil.create("div");
+        div.style.background = "white";
+        div.style.padding = "8px";
+        div.style.borderRadius = "6px";
+        div.style.boxShadow = "0 1px 4px rgba(0,0,0,0.2)";
+        div.innerHTML = `
+            <div style="font-size:12px; margin-bottom:6px;">Median Income ($)</div>
+            <div style="width:120px; height:10px;
+                 background: linear-gradient(to right, #ffffcc, #fd8d3c, #bd0026);">
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:4px;">
+                <span>${Math.round(d3.min(validData, d => d.income))}</span>
+                <span>${Math.round(d3.max(validData, d => d.income))}</span>
+            </div>
+        `;
+        return div;
+    };
 
-    legend.append("text")
-        .attr("x", 0)
-        .attr("y", -5)
-        .attr("font-size", 10)
-        .text("Median Income ($)");
-
-    legend.append("text")
-        .attr("x", 0)
-        .attr("y", 25)
-        .attr("font-size", 10)
-        .text(Math.round(d3.min(validData, d => d.income)));
-
-    legend.append("text")
-        .attr("x", legendWidth)
-        .attr("y", 25)
-        .attr("text-anchor", "end")
-        .attr("font-size", 10)
-        .text(Math.round(d3.max(validData, d => d.income)));
-
-    // Title
-    heatmapSVG.append("text")
-        .attr("x", heatmapWidth / 2)
-        .attr("y", 10)
-        .attr("text-anchor", "middle")
-        .attr("font-size", 12)
-        .attr("font-weight", "bold")
-        .text("LA High Schools by Median Income");
+    legend.addTo(map);
 
 }).catch(err => console.error("Map error:", err));
 
@@ -229,21 +220,15 @@ d3.csv("data/la_schools.csv", d => ({
         .attr("r", 5)
         .attr("fill", "steelblue")
         .attr("opacity", d => opacityScale(d.income))
-        .on("mouseover", function(event, d) {
-            d3.select(this)
-                .attr("fill", "red")
-                .attr("r", 7);
-
-            d3.select("#details")
-                .text(`${d.school} | Median Income: $${d.income.toLocaleString()} | Avg SAT: ${d.score}`);
+        .each(function(d) {
+            scatterDotsBySchool[d.school] = d3.select(this);
         })
-        .on("mouseout", function() {
-            d3.select(this)
-                .attr("fill", "steelblue")
-                .attr("r", 5);
-
-            d3.select("#details")
-                .text("Hover over a data point to see school details");
+        .on("mouseover", function(event, d) {
+            highlightSchool(d.school);
+            showSchoolDetails(d);
+        })
+        .on("mouseout", function(event, d) {
+            resetSchoolHighlight(d.school);
         });
 
     // x-axis label
