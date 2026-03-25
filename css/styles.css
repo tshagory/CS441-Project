@@ -3,13 +3,13 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f9f9f9;
-    color: #333;
+    color: #2f487f;
 }
 
 header {
     text-align: center;
     padding: 40px;
-    background-color: #222;
+    background-color: #2f487f;
     color: white;
 }
 
@@ -95,14 +95,14 @@ svg {
 
 .poem-left {
     background: #fff8ef;
-    color: #222;
+    color: #2f487f;
     opacity: 1;
 }
 
 .poem-right {
     background: #f3f3f3;
-    color: #666;
-    opacity: 0.6;
+    color: #2f487f;
+    opacity: 0.4;
 }
 
 #heatmap {
@@ -133,7 +133,7 @@ svg {
 .city-nav-btn {
     padding: 10px 18px;
     background: #ddd;
-    color: #222;
+    color: #2f487f;
     border: none;
     border-radius: 8px;
     font-size: 15px;
@@ -145,7 +145,7 @@ svg {
 }
 
 .city-nav-btn.active {
-    background: #222;
+    background: #2f487f;
     color: white;
 }
 
