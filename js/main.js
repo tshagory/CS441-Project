@@ -64,7 +64,8 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 // Load data
 // "data/la_schools.csv"
-d3.csv("data/atl_schools.csv", d => ({
+// "data/atl_schools.csv"
+d3.csv("data/hou_schools.csv", d => ({
     school: d.school,
     latitude: +d.latitude,
     longitude: +d.longitude,
@@ -168,7 +169,8 @@ const scatterGroup = scatterSVG.append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 //"data/la_schools.csv"
-d3.csv("data/atl_schools.csv", d => ({
+//"data/atl_schools.csv"
+d3.csv("data/hou_schools.csv", d => ({
     school: d.school,
     latitude: +d.latitude,
     longitude: +d.longitude,
