@@ -63,20 +63,21 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 // Load data
-d3.csv("data/la_schools.csv", d => ({
+// "data/la_schools.csv"
+d3.csv("data/atl_schools.csv", d => ({
     school: d.school,
     latitude: +d.latitude,
     longitude: +d.longitude,
     score: +d.score,
     income: +d.income,
-    funding: +d.funding,
-    enrollment: +d.enrollment,
-    white: +d.white,
-    asian: +d.asian,
-    black: +d.black,
-    hispanic: +d.hispanic,
-    other: +d.other,
-    minority: +d.minority
+    //funding: +d.funding,
+    //enrollment: +d.enrollment,
+    //white: +d.white,
+    //asian: +d.asian,
+    //black: +d.black,
+    //hispanic: +d.hispanic,
+    //other: +d.other,
+    //minority: +d.minority
 })).then(data => {
 
     const validData = data.filter(d =>
@@ -166,7 +167,8 @@ const scatterSVG = d3.select("#scatter")
 const scatterGroup = scatterSVG.append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-d3.csv("data/la_schools.csv", d => ({
+//"data/la_schools.csv"
+d3.csv("data/atl_schools.csv", d => ({
     school: d.school,
     latitude: +d.latitude,
     longitude: +d.longitude,

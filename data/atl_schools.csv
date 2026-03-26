@@ -1,16 +1,16 @@
-school,address,latitude,longitude,score,income,funding,enrollment,American Indian/Alaska Native - male [Public School] 2024-25,American Indian/Alaska Native - female [Public School] 2024-25,Asian or Asian/Pacific Islander - male [Public School] 2024-25,Asian or Asian/Pacific Islander - female [Public School] 2024-25,Hispanic - male [Public School] 2024-25,Hispanic - female [Public School] 2024-25,Black or African American - male [Public School] 2024-25,Black or African American - female [Public School] 2024-25,White - female [Public School] 2024-25,White - male [Public School] 2024-25,Nat. Hawaiian or Other Pacific Isl. - male [Public School] 2024-25,Nat. Hawaiian or Other Pacific Isl. - female [Public School] 2024-25,Two or More Races - male [Public School] 2024-25,Two or More Races - female [Public School] 2024-25,Test Score -ACT
-Atlanta Classical Academy,"3260 NORTHSIDE DR NW ATLANTA, GA 30305",,,1250,107836,12429472,171,0,1,2,4,23,33,66,52,237,232,0,1,23,23,28
-B.E.S.T Academy,,,,960,79222,6385212,136,0,0,0,0,14,0,249,0,0,1,0,0,4,0,18
-Benjamin E. Mays High School,,,,990,61548,16776542,1338,0,2,0,0,49,56,597,617,0,1,2,0,6,8,19
-Booker T. Washington High School,,,,960,36870,11954461,856,1,1,1,1,12,9,414,397,3,2,0,0,10,5,17
-Carver High School,,,,970,42383,8912780,544,3,1,0,1,6,6,265,257,1,3,0,0,1,0,18
-Charles Drew Charter JA/SR Academy,,,,1100,105190,20184862,481,2,1,6,2,14,14,338,365,71,94,2,2,16,14,24
-Coretta Scott King Young Women's Leadership Academy,,,,970,79222,8219628,193,0,0,0,0,0,15,0,353,1,0,0,0,0,8,19
-D. M. Therrell High School,,,,990,51242,12145667,964,2,1,1,0,17,19,475,435,1,1,1,1,4,6,18
-Frederick Douglass High School,,,,980,79222,17861291,1296,2,3,2,1,53,50,604,561,0,1,0,0,7,12,17
-Hank Aaron New Beginnings Academy,,,,960,42383,8763442,116,1,0,0,0,2,1,88,53,0,1,0,0,1,0,18
-Kipp Atlanta Collegiate Charter School,,,,1050,36870,10764976,874,0,0,0,0,6,3,425,431,0,0,2,0,7,0,20
-Maynard Jackson High School,,,,1100,96491,17236791,1549,1,0,7,4,67,54,478,559,162,168,1,0,27,21,23
-Midtown High School,,,,1240,111894,16037318,1696,3,5,23,24,72,81,317,316,356,375,0,1,65,58,29
-North Atlanta High School,,,,1180,182317,22300758,2368,2,8,25,23,293,290,440,466,362,324,0,3,75,57,27
-South Atlanta High School,,,,950,53932,12962728,942,0,0,0,0,44,45,438,397,0,1,0,1,9,7,20
+school,latitude,longitude,score,income,funding,enrollment,American Indian/Alaska Native - male [Public School] 2024-25,American Indian/Alaska Native - female [Public School] 2024-25,Asian or Asian/Pacific Islander - male [Public School] 2024-25,Asian or Asian/Pacific Islander - female [Public School] 2024-25,Hispanic - male [Public School] 2024-25,Hispanic - female [Public School] 2024-25,Black or African American - male [Public School] 2024-25,Black or African American - female [Public School] 2024-25,White - female [Public School] 2024-25,White - male [Public School] 2024-25,Nat. Hawaiian or Other Pacific Isl. - male [Public School] 2024-25,Nat. Hawaiian or Other Pacific Isl. - female [Public School] 2024-25,Two or More Races - male [Public School] 2024-25,Two or More Races - female [Public School] 2024-25,Test Score -ACT
+Atlanta Classical Academy,33.8437898,-84.4077224,1250,107836,12429472,171,0,1,2,4,23,33,66,52,237,232,0,1,23,23,28
+B.E.S.T Academy,33.7893752,-84.4799756,960,79222,6385212,136,0,0,0,0,14,0,249,0,0,1,0,0,4,0,18
+Benjamin E. Mays High School,33.7338808,-84.5037567,990,61548,16776542,1338,0,2,0,0,49,56,597,617,0,1,2,0,6,8,19
+Booker T. Washington High School,33.7535861,-84.4207258,960,36870,11954461,856,1,1,1,1,12,9,414,397,3,2,0,0,10,5,17
+Carver High School,33.7185122,-84.3888644,970,42383,8912780,544,3,1,0,1,6,6,265,257,1,3,0,0,1,0,18
+Charles Drew Charter JA/SR Academy,33.7465218,-84.3113724,1100,105190,20184862,481,2,1,6,2,14,14,338,365,71,94,2,2,16,14,24
+Coretta Scott King Young Women's Leadership Academy,33.7893852,-84.4799856,970,79222,8219628,193,0,0,0,0,0,15,0,353,1,0,0,0,0,8,19
+D. M. Therrell High School,33.6989009,-84.4887669,990,51242,12145667,964,2,1,1,0,17,19,475,435,1,1,1,1,4,6,18
+Frederick Douglass High School,33.7612153,-84.4682026,980,79222,17861291,1296,2,3,2,1,53,50,604,561,0,1,0,0,7,12,17
+Hank Aaron New Beginnings Academy,33.6748604,-84.398375,960,42383,8763442,116,1,0,0,0,2,1,88,53,0,1,0,0,1,0,18
+Kipp Atlanta Collegiate Charter School,33.7563054,-84.4509143,1050,36870,10764976,874,0,0,0,0,6,3,425,431,0,0,2,0,7,0,20
+Maynard Jackson High School,33.7392055,-84.3614433,1100,96491,17236791,1549,1,0,7,4,67,54,478,559,162,168,1,0,27,21,23
+Midtown High School,33.7807764,-84.3705702,1240,111894,16037318,1696,3,5,23,24,72,81,317,316,356,375,0,1,65,58,29
+North Atlanta High School,33.8663324,-84.4462888,1180,182317,22300758,2368,2,8,25,23,293,290,440,466,362,324,0,3,75,57,27
+South Atlanta High School,33.6710693,-84.3619177,950,53932,12962728,942,0,0,0,0,44,45,438,397,0,1,0,1,9,7,20
