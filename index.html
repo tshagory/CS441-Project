@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS441 Information Visualization</title>
-    <!-- Styles -->
+    <!-- STYLES -->
     <link rel="stylesheet" href="css/styles.css">
     <link
         rel="stylesheet"
@@ -12,86 +12,134 @@
     />
     <!-- D3 -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <!-- Leaflet -->
+    <!-- LEAFLET -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
+    <!-- WELCOME POP-UP -->
+    <div id="welcome-modal" class="modal-overlay">
+    <div class="modal-box">
+        <button id="close-modal" class="modal-close-btn">&times;</button>
+        <h2>Income, Opportunity, and Educational Outcomes</h2>
+        <p>
+            This project examines how neighborhood median household income, adjusted by cost of living index, relates to average SAT performance
+            across high schools in four major U.S. cities.
+
+        </p>
+        <p>
+            By combining geography, statistical comparison, and poetic narrative, this visualization highlights
+            how unequal access to resources may shape students’ educational experiences, opportunities, and ultimately outcomes.
+
+        </p>
+        <p>
+            Use the heatmap, scatterplot, and interactive poems to explore patterns across cities and compare
+            schools in the highest and lowest income quartiles.
+
+        </p>
+        <button id="start-exploring" class="modal-action-btn">Start Exploring</button>
+    </div>
+</div>
     <!-- HEADER -->
     <header>
         <h1>CS441 Information Visualization Project</h1>
         <p class="subtitle">Ty Shagory, Bohan Wang, Olivia Joyner, Jose Izaguirre</p>
     </header>
     <!-- POEM SECTION -->
-<section class="text-section">
-    <h2>Mondays in High School</h2>
-    <div class="poem-container">
-        <div class="poem poem-left" id="poem-high">
-            <p> I awaken to the sun's bright glare in my eyes,
-                quick shower for today or else I'll be late.
-                Eggs, bacon, and orange juice, not a surprise,
-                in the long driveway out front my car awaits.
+    <section class="text-section">
+        <h2>Mondays in High School</h2>
+        <div class="poem-container">
+            <!-- LEFT POEM -->
+            <div class="poem-panel">
+                <button class="info-btn" data-info="high-poem-info">i</button>
+                <div class="info-popup" id="high-poem-info">
+                    Click to highlight schools in the top income quartile for the selected city. Click again to reset.
+                </div>
+                <div class="poem poem-left" id="poem-high">
+                    <p>
+                        I awaken to the sun's bright glare in my eyes,
+                        quick shower for today or else I'll be late.
+                        Eggs, bacon, and orange juice, not a surprise,
+                        in the long driveway out front my car awaits.
 
-                First my AP bio exam, then to the dome
-                where counselors will cover college apps step-by-step.
-                At the final bell, I'd love to go head right home,
-                but that time is set for standardized test prep.
+                        First my AP bio exam, then to the dome
+                        where counselors will cover college apps step-by-step.
+                        At the final bell, I'd love to go head right home,
+                        but that time is set for standardized test prep.
 
-                Back home and after dinner, I grab my book,
-                cram for tomorrow's quiz and edit my essay.
-                As I shut off my lamp, I take one last look
-                at my dream school's webpage, only ten months away.
-            </p>
+                        Back home and after dinner, I grab my book,
+                        cram for tomorrow's quiz and edit my essay.
+                        As I shut off my lamp, I take one last look
+                        at my dream school's webpage, only ten months away.
+                    </p>
+                </div>
+            </div>
+            <!-- RIGHT POEM -->
+            <div class="poem-panel">
+                <button class="info-btn" data-info="low-poem-info">i</button>
+                <div class="info-popup" id="low-poem-info">
+                    Click to highlight schools in the bottom income quartile for the selected city. Click again to reset.
+                </div>
+                <div class="poem poem-right" id="poem-low">
+                    <p>
+                        Startled by my alarm's sudden angry blare,
+                        I rush through the house, hair a usual mess,
+                        taxes and unpaid bills strewn out everywhere.
+                        I arrived at the bus stop in time, breathless.
+
+                        Overcrowded, the desks in general bio feel,
+                        and again, our sole college counselor booked out.
+                        For all the homework I have, the thought makes me reel,
+                        of my after-school job where I'll be no doubt.
+
+                        Back on the bus and arriving home by ten,
+                        exhausted though I am forced into a flow.
+                        "Finally", I yawn as I drop my pen.
+                        I'll finish that scholarship form tomorrow.
+                    </p>
+                </div>
+            </div>
         </div>
-
-        <div class="poem poem-right" id="poem-low">
-            <p> Startled by my alarm's sudden angry blare,
-                I rush through the house, hair a usual mess,
-                taxes and unpaid bills strewn out everywhere.
-                I arrived at the bus stop in time, breathless.
-
-                Overcrowded, the desks in general bio feel,
-                and again, our sole college counselor booked out.
-                For all the homework I have, the thought makes me reel,
-                of my after-school job where I'll be no doubt.
-
-                Back on the bus and arriving home by ten,
-                exhausted though I am forced into a flow.
-                "Finally", I yawn as I drop my pen.
-                I'll finish that scholarship form tomorrow.
-            </p>
-        </div>
-    </div>
-</section>
+    </section>
     <!-- BUTTON NAVIGATION -->
-<section class="city-nav-section">
-    <div class="city-nav">
-        <button class="city-nav-btn active">Los Angeles</button>
-        <button class="city-nav-btn">Atlanta</button>
-        <button class="city-nav-btn">Houston</button>
-        <button class="city-nav-btn">Chicago</button>
-    </div>
-</section>
+    <section class="city-nav-section">
+        <div class="city-nav">
+            <button class="city-nav-btn active">Los Angeles</button>
+            <button class="city-nav-btn">Atlanta</button>
+            <button class="city-nav-btn">Houston</button>
+            <button class="city-nav-btn">Chicago</button>
+        </div>
+    </section>
     <!-- MAIN VISUALIZATION LAYOUT -->
-<section class="vis-section">
-    <h2>City Analysis: Los Angeles</h2>
-    <div class="vis-container">
-        <div class="chart-box">
-            <h3 id="map-title">LA High Schools by Median Income</h3>
-            <div id="heatmap"></div>
+    <section class="vis-section">
+        <h2>City Analysis: Los Angeles</h2>
+        <div class="vis-container">
+            <!-- HEATMAP PANEL -->
+            <div class="chart-box chart-panel">
+                <button class="info-btn" data-info="map-info">i</button>
+                <div class="info-popup" id="map-info">
+                    This map colors schools by surrounding median household income. Hover for details or click to lock a school.
+                </div>
+                <h3 id="map-title">LA High Schools by Median Income</h3>
+                <div id="heatmap"></div>
+            </div>
+            <!-- SCATTERPLOT PANEL -->
+            <div class="chart-box chart-panel">
+                <button class="info-btn" data-info="scatter-info">i</button>
+                <div class="info-popup" id="scatter-info">
+                    This scatterplot compares median household income and average SAT score, showing their overall relationship.
+                </div>
+                <h3 id="scatter-title">Median Income vs Average SAT Score</h3>
+                <div id="scatter"></div>
+            </div>
         </div>
-        <div class="chart-box">
-            <h3 id="scatter-title">Median Income vs Average SAT Score</h3>
-            <div id="scatter"></div>
+    </section>
+    <!-- INFO PANEL -->
+    <section>
+        <div id="info-panel">
+            <h3>School Info</h3>
+            <p id="details">Hover over a school's data point to display its data, and click a data point to keep it displayed</p>
         </div>
-    </div>
-</section>
-<!-- INFO PANEL -->
-<section>
-    <div id="info-panel">
-        <h3>School Info</h3>
-        <p id="details">Hover over a data point to see school details</p>
-    </div>
-</section>
+    </section>
     <!-- FOOTER -->
     <footer>
         <p>CS441 • Information Visualization • Spring 2026</p>

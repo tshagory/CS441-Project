@@ -4,9 +4,14 @@ const scatterOpacityBySchool = {};
 let lockedSchool = null;
 let lockedData = null;
 const defaultDetailsText = "Hover over a school's data point to display its data, and click a data point to keep it displayed";
-const GLOBAL_INCOME_DOMAIN = [30000, 190000];
-
-let = activePoemGroup = null;
+const GLOBAL_INCOME_DOMAIN = [40000, 250000];
+const costOfLivingIndex = {
+    "Los Angeles": 81.8,
+    "Chicago": 75.4,
+    "Atlanta": 75.1,
+    "Houston": 64.8
+}
+let activePoemGroup = null;
 
 function highlightIncomeGroup(data, type) {
     const incomes = data.map(d => d.income).sort(d3.ascending);
@@ -89,23 +94,23 @@ function resetIncomeGroupView() {
 const cityConfig = {
     "Los Angeles": {
         file: "data/la_schools.csv",
-        mapTitle: "LA High Schools by Median Income",
-        scatterTitle: "Median Income vs Average SAT Score"
+        mapTitle: "LA High Schools by Adjusted Income",
+        scatterTitle: "Adjusted Income vs Average SAT Score"
     },
     "Atlanta": {
         file: "data/atl_schools.csv",
-        mapTitle: "Atlanta High Schools by Median Income",
-        scatterTitle: "Median Income vs Average SAT Score"
+        mapTitle: "Atlanta High Schools by Adjusted Income",
+        scatterTitle: "Adjusted Income vs Average SAT Score"
     },
     "Houston": {
         file: "data/hou_schools.csv",
-        mapTitle: "Houston High Schools by Median Income",
-        scatterTitle: "Median Income vs Average SAT Score"
+        mapTitle: "Houston High Schools by Adjusted Income",
+        scatterTitle: "Adjusted Income vs Average SAT Score"
     },
     "Chicago": {
         file: "data/chi_schools.csv",
-        mapTitle: "Chicago High Schools by Median Income",
-        scatterTitle: "Median Income vs Average SAT Score"
+        mapTitle: "Chicago High Schools by Adjusted Income",
+        scatterTitle: "Adjusted Income vs Average SAT Score"
     }
 };
 
@@ -297,6 +302,7 @@ function clearVisuals() {
 // render city when prompted
 function loadCity(cityName) {
     const config = cityConfig[cityName];
+    const colIndex = costOfLivingIndex[cityName] || 100;
 
     d3.select("#map-title").text(config.mapTitle);
     d3.select("#scatter-title").text(config.scatterTitle);
@@ -310,7 +316,7 @@ function loadCity(cityName) {
         latitude: +d.latitude,
         longitude: +d.longitude,
         score: +d.score,
-        income: +d.income,
+        income: +d.income / (colIndex / 100),
         funding: +d.funding,
         enrollment: +d.enrollment,
         white: +d.white,
@@ -385,7 +391,7 @@ function loadCity(cityName) {
             div.style.borderRadius = "6px";
             div.style.boxShadow = "0 1px 4px rgba(0,0,0,0.2)";
             div.innerHTML = `
-                <div style="font-size:12px; margin-bottom:6px;">Median Income ($)</div>
+                <div style="font-size:12px; margin-bottom:6px;">Adjusted Income ($)</div>
                 <div style="width:120px; height:10px;
                     background: linear-gradient(to right, #ffffcc, #fd8d3c, #bd0026);">
                 </div>
@@ -464,7 +470,7 @@ function loadCity(cityName) {
             .attr("y", scatterHeight - 10)
             .attr("text-anchor", "middle")
             .attr("font-size", 12)
-            .text("Median Household Income ($)");
+            .text("Adjusted Median Household Income ($)");
 
         scatterSVG.append("text")
             .attr("class", "axis-label")
@@ -482,7 +488,7 @@ function loadCity(cityName) {
             .attr("text-anchor", "middle")
             .attr("font-size", 14)
             .attr("font-weight", "bold")
-            .text("Income vs Test Score");
+            .text("Adjusted Income vs Test Score");
 
         d3.select("#poem-high").on("click", () => {
             const alreadyActive = activePoemGroup === "high";
@@ -541,6 +547,46 @@ buttons.forEach(button => {
         const cityName = button.textContent.trim();
         loadCity(cityName);
     });
+});
+
+document.querySelectorAll(".info-btn").forEach(button => {
+    button.addEventListener("click", function(event) {
+        event.stopPropagation();
+
+        const popupId = this.getAttribute("data-info");
+        const popup = document.getElementById(popupId);
+
+        document.querySelectorAll(".info-popup").forEach(p => {
+            if (p !== popup) {
+                p.classList.remove("show");
+            }
+        });
+
+        popup.classList.toggle("show");
+    });
+});
+
+document.addEventListener("click", function() {
+    document.querySelectorAll(".info-popup").forEach(popup => {
+        popup.classList.remove("show");
+    });
+});
+
+const welcomeModal = document.getElementById("welcome-modal");
+const closeModalBtn = document.getElementById("close-modal");
+const startExploringBtn = document.getElementById("start-exploring");
+
+function closeWelcomeModal() {
+    welcomeModal.classList.add("modal-hidden");
+}
+
+closeModalBtn.addEventListener("click", closeWelcomeModal);
+startExploringBtn.addEventListener("click", closeWelcomeModal);
+
+welcomeModal.addEventListener("click", function(event) {
+    if (event.target === welcomeModal) {
+        closeWelcomeModal();
+    }
 });
 
 // initial load
