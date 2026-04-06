@@ -85,6 +85,18 @@ svg {
     border-radius: 8px;
     line-height: 1.8;
     text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.poem:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.poem.active-poem {
+    outline: 2px solid #2f487f;
+    opacity: 1 !important;
 }
 
 .poem p {

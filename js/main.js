@@ -1,8 +1,90 @@
 const mapMarkersBySchool = {};
 const scatterDotsBySchool = {};
+const scatterOpacityBySchool = {};
 let lockedSchool = null;
 let lockedData = null;
 const defaultDetailsText = "Hover over a school's data point to display its data, and click a data point to keep it displayed";
+const GLOBAL_INCOME_DOMAIN = [30000, 190000];
+
+let = activePoemGroup = null;
+
+function highlightIncomeGroup(data, type) {
+    const incomes = data.map(d => d.income).sort(d3.ascending);
+    const q1 = d3.quantile(incomes, 0.25);
+    const q3 = d3.quantile(incomes, 0.75);
+
+    let selectedSchools;
+
+    if (type === "high") {
+        selectedSchools = data.filter(d => d.income >= q3).map(d => d.school);
+    } else if (type === "low") {
+        selectedSchools = data.filter(d => d.income <= q1).map(d => d.school);
+    } else {
+        selectedSchools = [];
+    }
+
+    Object.keys(mapMarkersBySchool).forEach(school => {
+        const marker = mapMarkersBySchool[school];
+        if (!marker) return;
+
+        if (selectedSchools.includes(school)) {
+            marker.setStyle({
+                radius: 6,          // keep normal size
+                color: "black",
+                weight: 1.5,
+                fillOpacity: 0.85   // keep normal fill opacity
+            });
+        } else {
+            marker.setStyle({
+                radius: 6,          // keep normal size
+                color: "#999",
+                weight: 0.5,
+                fillOpacity: 0.2
+            });
+        }
+    });
+
+    Object.keys(scatterDotsBySchool).forEach(school => {
+        const dot = scatterDotsBySchool[school];
+        if (!dot) return;
+
+        if (selectedSchools.includes(school)) {
+            dot
+                .attr("fill", "crimson")
+                .attr("r", 7) // same as regular highlight
+                .attr("opacity", scatterOpacityBySchool[school]); // preserve original opacity
+        } else {
+            dot
+                .attr("fill", "steelblue")
+                .attr("r", 5)
+                .attr("opacity", 0.15);
+        }
+    });
+}
+
+function resetIncomeGroupView() {
+    Object.keys(mapMarkersBySchool).forEach(school => {
+        const marker = mapMarkersBySchool[school];
+        if (!marker) return;
+
+        marker.setStyle({
+            radius: 6,
+            color: "#333",
+            weight: 0.5,
+            fillOpacity: 0.85
+        });
+    });
+
+    Object.keys(scatterDotsBySchool).forEach(school => {
+        const dot = scatterDotsBySchool[school];
+        if (!dot) return;
+
+        dot
+            .attr("fill", "steelblue")
+            .attr("r", 5)
+            .attr("opacity", scatterOpacityBySchool[school]);
+    });
+}
 
 const cityConfig = {
     "Los Angeles": {
@@ -53,17 +135,77 @@ function resetSchoolHighlight(schoolName) {
     const mapMarker = mapMarkersBySchool[schoolName];
     const scatterDot = scatterDotsBySchool[schoolName];
 
+    // If a poem group is active, don't let normal hover-out remove that poem highlight
+    if (activePoemGroup) {
+        const allSchools = Object.keys(scatterDotsBySchool);
+        const incomes = allSchools
+            .map(name => {
+                const dot = scatterDotsBySchool[name];
+                return dot && dot.datum ? dot.datum().income : null;
+            })
+            .filter(v => v !== null)
+            .sort(d3.ascending);
+
+        const q1 = d3.quantile(incomes, 0.25);
+        const q3 = d3.quantile(incomes, 0.75);
+
+        const thisData = scatterDot ? scatterDot.datum() : null;
+        const inHighlightedGroup =
+            thisData &&
+            (
+                (activePoemGroup === "high" && thisData.income >= q3) ||
+                (activePoemGroup === "low" && thisData.income <= q1)
+            );
+
+        if (mapMarker) {
+            if (inHighlightedGroup) {
+                mapMarker.setStyle({
+                    radius: 6,
+                    color: "black",
+                    weight: 1.5,
+                    fillOpacity: 0.85
+                });
+            } else {
+                mapMarker.setStyle({
+                    radius: 6,
+                    color: "#999",
+                    weight: 0.5,
+                    fillOpacity: 0.2
+                });
+            }
+        }
+
+        if (scatterDot) {
+            if (inHighlightedGroup) {
+                scatterDot
+                    .attr("fill", "crimson")
+                    .attr("r", 7)
+                    .attr("opacity", scatterOpacityBySchool[schoolName]);
+            } else {
+                scatterDot
+                    .attr("fill", "steelblue")
+                    .attr("r", 5)
+                    .attr("opacity", 0.15);
+            }
+        }
+
+        return;
+    }
+
     if (mapMarker) {
         mapMarker.setStyle({
             color: "#333",
-            weight: 0.5
+            weight: 0.5,
+            radius: 6,
+            fillOpacity: 0.85
         });
     }
 
     if (scatterDot) {
         scatterDot
             .attr("fill", "steelblue")
-            .attr("r", 5);
+            .attr("r", 5)
+            .attr("opacity", scatterOpacityBySchool[schoolName]);
     }
 }
 
@@ -135,6 +277,7 @@ function clearVisuals() {
 
     for (const key in mapMarkersBySchool) delete mapMarkersBySchool[key];
     for (const key in scatterDotsBySchool) delete scatterDotsBySchool[key];
+    for (const key in scatterOpacityBySchool) delete scatterOpacityBySchool[key];
 
     scatterGroup.selectAll("*").remove();
     scatterSVG.selectAll(".axis-label").remove();
@@ -146,6 +289,9 @@ function clearVisuals() {
     }
 
     resetSchoolDetails();
+
+    activePoemGroup = null;
+    d3.selectAll(".poem").classed("active-poem", false);
 }
 
 // render city when prompted
@@ -187,7 +333,7 @@ function loadCity(cityName) {
 
         // leaflet map
         const colorScale = d3.scaleSequential()
-            .domain(d3.extent(validMapData, d => d.income))
+            .domain(GLOBAL_INCOME_DOMAIN)
             .interpolator(d3.interpolateYlOrRd);
 
         const bounds = [];
@@ -244,8 +390,8 @@ function loadCity(cityName) {
                     background: linear-gradient(to right, #ffffcc, #fd8d3c, #bd0026);">
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:4px;">
-                    <span>${Math.round(d3.min(validMapData, d => d.income))}</span>
-                    <span>${Math.round(d3.max(validMapData, d => d.income))}</span>
+                    <span>${GLOBAL_INCOME_DOMAIN[0]}</span>
+                    <span>${GLOBAL_INCOME_DOMAIN[1]}</span>
                 </div>
             `;
             return div;
@@ -291,9 +437,10 @@ function loadCity(cityName) {
             .attr("r", 5)
             .attr("fill", "steelblue")
             .attr("opacity", d => opacityScale(d.income))
-            .each(function(d) {
-                scatterDotsBySchool[d.school] = d3.select(this);
-            })
+                .each(function(d) {
+                    scatterDotsBySchool[d.school] = d3.select(this);
+                    scatterOpacityBySchool[d.school] = opacityScale(d.income);
+                })
             .on("mouseover", function(event, d) {
                 highlightSchool(d.school);
                 showSchoolDetails(d);
@@ -336,6 +483,50 @@ function loadCity(cityName) {
             .attr("font-size", 14)
             .attr("font-weight", "bold")
             .text("Income vs Test Score");
+
+        d3.select("#poem-high").on("click", () => {
+            const alreadyActive = activePoemGroup === "high";
+
+            // clear previous selection
+            d3.selectAll(".poem").classed("active-poem", false);
+
+            // reset locked school so interactions don’t conflict
+            lockedSchool = null;
+            lockedData = null;
+            resetSchoolDetails();
+
+            if (alreadyActive) {
+                activePoemGroup = null;
+                resetIncomeGroupView();
+                return;
+            }
+
+            activePoemGroup = "high";
+            d3.select("#poem-high").classed("active-poem", true);
+
+            highlightIncomeGroup(validScatterData, "high");
+        });
+
+        d3.select("#poem-low").on("click", () => {
+            const alreadyActive = activePoemGroup === "low";
+
+            d3.selectAll(".poem").classed("active-poem", false);
+
+            lockedSchool = null;
+            lockedData = null;
+            resetSchoolDetails();
+
+            if (alreadyActive) {
+                activePoemGroup = null;
+                resetIncomeGroupView();
+                return;
+            }
+
+            activePoemGroup = "low";
+            d3.select("#poem-low").classed("active-poem", true);
+
+            highlightIncomeGroup(validScatterData, "low");
+        });
     });
 }
 
