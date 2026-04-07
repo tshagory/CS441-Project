@@ -1,4 +1,4 @@
-const mapMarkersBySchool = {};
+const mapMarkersBySchool = {}; 
 const scatterDotsBySchool = {};
 const scatterOpacityBySchool = {};
 let lockedSchool = null;
@@ -13,6 +13,7 @@ const costOfLivingIndex = {
 }
 let activePoemGroup = null;
 
+// highlights respective income quartile
 function highlightIncomeGroup(data, type) {
     const incomes = data.map(d => d.income).sort(d3.ascending);
     const q1 = d3.quantile(incomes, 0.25);
@@ -34,14 +35,14 @@ function highlightIncomeGroup(data, type) {
 
         if (selectedSchools.includes(school)) {
             marker.setStyle({
-                radius: 6,          // keep normal size
+                radius: 6, 
                 color: "black",
                 weight: 1.5,
-                fillOpacity: 0.85   // keep normal fill opacity
+                fillOpacity: 0.85
             });
         } else {
             marker.setStyle({
-                radius: 6,          // keep normal size
+                radius: 6,    
                 color: "#999",
                 weight: 0.5,
                 fillOpacity: 0.2
@@ -56,8 +57,8 @@ function highlightIncomeGroup(data, type) {
         if (selectedSchools.includes(school)) {
             dot
                 .attr("fill", "crimson")
-                .attr("r", 7) // same as regular highlight
-                .attr("opacity", scatterOpacityBySchool[school]); // preserve original opacity
+                .attr("r", 7) 
+                .attr("opacity", scatterOpacityBySchool[school]); 
         } else {
             dot
                 .attr("fill", "steelblue")
@@ -67,6 +68,7 @@ function highlightIncomeGroup(data, type) {
     });
 }
 
+// resets styling after each poem's quartile data is displayed
 function resetIncomeGroupView() {
     Object.keys(mapMarkersBySchool).forEach(school => {
         const marker = mapMarkersBySchool[school];
@@ -114,6 +116,7 @@ const cityConfig = {
     }
 };
 
+// highlight a single school via scatterplot/heat map
 function highlightSchool(schoolName) {
     const mapMarker = mapMarkersBySchool[schoolName];
     const scatterDot = scatterDotsBySchool[schoolName];
@@ -132,6 +135,7 @@ function highlightSchool(schoolName) {
     }
 }
 
+// restore school styling after highlighting it
 function resetSchoolHighlight(schoolName) {
     if (lockedSchool === schoolName) {
         return;
@@ -140,7 +144,6 @@ function resetSchoolHighlight(schoolName) {
     const mapMarker = mapMarkersBySchool[schoolName];
     const scatterDot = scatterDotsBySchool[schoolName];
 
-    // If a poem group is active, don't let normal hover-out remove that poem highlight
     if (activePoemGroup) {
         const allSchools = Object.keys(scatterDotsBySchool);
         const incomes = allSchools
@@ -214,12 +217,14 @@ function resetSchoolHighlight(schoolName) {
     }
 }
 
+// display school details when prompted
 function showSchoolDetails(d) {
     d3.select("#details").text(
         `${d.school} | Median Income: $${d.income.toLocaleString()} | Avg SAT: ${d.score}`
     );
 }
 
+// locks school details in place
 function toggleLockSchool(d) {
     if (lockedSchool === d.school) {
         lockedSchool = null;
@@ -238,6 +243,7 @@ function toggleLockSchool(d) {
     }
 }
 
+// clears school info panel
 function resetSchoolDetails() {
     d3.select("#details").text(defaultDetailsText);
 }
@@ -273,7 +279,7 @@ const scatterSVG = d3.select("#scatter")
 const scatterGroup = scatterSVG.append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-// clear existing city data
+// resets visuals for scatterplot/heatmap
 function clearVisuals() {
     lockedSchool = null;
     lockedData = null;
@@ -493,10 +499,8 @@ function loadCity(cityName) {
         d3.select("#poem-high").on("click", () => {
             const alreadyActive = activePoemGroup === "high";
 
-            // clear previous selection
             d3.selectAll(".poem").classed("active-poem", false);
 
-            // reset locked school so interactions don’t conflict
             lockedSchool = null;
             lockedData = null;
             resetSchoolDetails();
@@ -576,6 +580,7 @@ const welcomeModal = document.getElementById("welcome-modal");
 const closeModalBtn = document.getElementById("close-modal");
 const startExploringBtn = document.getElementById("start-exploring");
 
+// hides initial popup
 function closeWelcomeModal() {
     welcomeModal.classList.add("modal-hidden");
 }
