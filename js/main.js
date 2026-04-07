@@ -322,7 +322,7 @@ function loadCity(cityName) {
         latitude: +d.latitude,
         longitude: +d.longitude,
         score: +d.score,
-        income: +d.income / (colIndex / 100),
+        income: Math.round(+d.income / (colIndex / 100)),
         funding: +d.funding,
         enrollment: +d.enrollment,
         white: +d.white,
